@@ -2,12 +2,13 @@
 # Contact: cristian.castiglione@phd.unipd.it
 # License: MIT
 # Creation: 16/04/2022
-# Last change: 05/11/2023
+# Last change: 04/12/2023
 
 include("PolyaGamma/PolyaGammaDistribution.jl")
+# include("SplineBasis/spline.jl")
 
 __precompile__()
-module BayesMixedModels
+module BayesGLMM
 
 # Lbraries
 using Plots, Random, Distributions, LinearAlgebra, SparseArrays
