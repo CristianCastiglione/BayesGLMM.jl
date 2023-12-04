@@ -1,4 +1,8 @@
 
+using LinearAlgebra
+using Distributions
+using OffsetArrays
+using BSplines
 
 #-------------------------------------------------------------------------------
 # Utilities
@@ -87,7 +91,7 @@ function get_bspline_system(
     k::Vector{T},
     a::T,
     b::T
-    )::Tuple
+    )::Tuple where T <: Float64
 
     B = get_bspline_matrix(x, k, a, b, 4, 0)
     P = get_bspline_energy(k, a, b)
@@ -120,7 +124,7 @@ function get_ospline_matrix(
     X = [ones(n) x]
     Z = B * L
 
-    return X, Z
+    return [X Z]
 end
 
 function get_ospline_energy(
