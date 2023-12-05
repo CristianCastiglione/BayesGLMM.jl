@@ -1,7 +1,6 @@
 
 ## Dependences
 include("../src/BayesGLMM.jl");
-include("../src/SplineBasis/spline.jl");
 
 ## External libraries
 using Printf
@@ -117,12 +116,10 @@ svb  = BayesGLMM.SVB(maxiter = 300, search = true);
 ## Convergence checks
 
 # MCMC
-BayesGLMM.plot_trace_dx(qreg_mcmc.opt)
-BayesGLMM.plot_trace_df(qreg_mcmc.opt)
-BayesGLMM.plot_trace_elbo(qreg_mcmc.opt)
-BayesGLMM.plot_trace_regparam(qreg_mcmc.opt)
-BayesGLMM.plot_trace_sigma2u(qreg_mcmc.opt)
-BayesGLMM.plot_trace_sigma2e(qreg_mcmc.opt)
+BayesGLMM.plot_trace_elbo(qreg_mcmc.opt, marker = :none)
+BayesGLMM.plot_trace_regparam(qreg_mcmc.opt, marker = :none)
+BayesGLMM.plot_trace_sigma2u(qreg_mcmc.opt, marker = :none)
+BayesGLMM.plot_trace_sigma2e(qreg_mcmc.opt, marker = :none)
 
 # MFVB
 BayesGLMM.plot_trace_dx(qreg_mfvb.opt)
@@ -140,11 +137,16 @@ BayesGLMM.plot_trace_regparam(qreg_svb.opt)
 BayesGLMM.plot_trace_sigma2u(qreg_svb.opt)
 BayesGLMM.plot_trace_sigma2e(qreg_svb.opt)
 
-## Posterior predictive distributions
+## Posterior summary
+BayesGLMM.coeftable(logit_mcmc.model, randeff = false)
+BayesGLMM.coeftable(logit_mfvb.model, randeff = false)
+BayesGLMM.coeftable(logit_svb.model, randeff = false)
 
+## Posterior predictive distributions
 begin
     plot(legend=:topleft, size=(600,300), title="Posterior quantile curves")
     scatter!(x, y, label="data", alpha=.5, color=:black)
+    plot!(x, mu + quantile(Normal(), tau) * sigma, label = "true")
     plot!(x, qreg_mcmc.model.eta.m, color=:1, label="MCMC")
     plot!(x, qreg_mcmc.model.eta.m .- 2 .* sqrt.(qreg_mcmc.model.eta.V), color=:1, linestyle=:dash, label="")
     plot!(x, qreg_mcmc.model.eta.m .+ 2 .* sqrt.(qreg_mcmc.model.eta.V), color=:1, linestyle=:dash, label="")
