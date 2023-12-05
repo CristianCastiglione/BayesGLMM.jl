@@ -81,6 +81,15 @@ export
     plot_trace_sigma2e, plot_trace_sigma2u,
     plot_trace_regparam, plot_trace_rate
 
+# Spline matrix builders
+export 
+    ### spline inner and boundary knots
+    get_bound_knots, get_inner_knots, get_unif_knots,
+    ### B-spline constructors
+    get_bspline_matrix, get_bspline_energy, get_bspline_system,
+    ### O-spline constructors
+    get_ospline_matrix, get_ospline_energy, get_ospline_system
+
 # global constants
 const log2 = log(2)
 const logπ = log(π)
@@ -114,6 +123,7 @@ const VecUIntRange = Vector{UnitRange{Int64}}
 include("utilities.jl")
 include("gaussquad.jl")
 include("linalg.jl")
+include("SplineBasis/spline.jl")
 include("prior.jl")
 include("algorithms.jl")
 include("optsummary.jl")
