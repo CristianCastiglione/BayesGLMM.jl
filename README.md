@@ -5,6 +5,6 @@ For a detailed description of the iterative optimization algorithms considered h
 
 ## References
 <a id="1">[1]</a> 
-Castiglione, C., Bernardi, M. (2023). 
+Castiglione, C., Bernardi, M. (2025). 
 Bayesian non-conjugate regression via variational message passing.
-arXiv preprint, arXiv:2206.09444.
+Journal of Computational and Graphical Statistics [https://doi.org/10.1080/10618600.2025.2527925](link).
