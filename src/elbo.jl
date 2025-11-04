@@ -77,7 +77,7 @@ gradient optimization algorithm
 function _elbo(
     y::Vector{T},
     f::Family,
-    psi0::T,
+    psi0::Vector{T},
     theta::RegParam{T},
     sigma2_e::ScaleParam{T},
     sigma2_u::VecScaleParam{T},
@@ -130,7 +130,7 @@ function _elbo(
 
     # evidence lower bound
     elbo  = .0
-    elbo -= (n_obs * mq_log_e + mq_inv_e * psi0) / alpha
+    elbo -= (n_obs * mq_log_e + mq_inv_e * sum(psi0)) / alpha
 
     elbo -= .5 * (n_fe_par * log(sigma2_b) + sum(n_re_par .* mq_log_u))
     elbo -= .5 * (mq_sq_t - n_fe_par - sum(n_re_par)) - logdet(Lq)
@@ -172,7 +172,7 @@ function _elbo(
     y::Vector{T},
     f::Family,
     n::Int64,
-    psi0::T,
+    psi0::Vector{T},
     theta::RegParam{T},
     sigma2_e::ScaleParam{T},
     sigma2_u::VecScaleParam{T},
@@ -226,7 +226,7 @@ function _elbo(
 
     # evidence lower bound
     elbo  = .0
-    elbo -= (n_obs * mq_log_e + mq_inv_e * n_obs * psi0 / n_mb) / alpha
+    elbo -= (n_obs * mq_log_e + (n_obs / n_mb) * mq_inv_e * sum(psi0) ) / alpha
 
     elbo -= .5 * (n_fe_par * log(sigma2_b) + sum(n_re_par .* mq_log_u))
     elbo -= .5 * (mq_sq_t - n_fe_par - sum(n_re_par)) - logdet(Lq)

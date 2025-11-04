@@ -152,7 +152,7 @@ function fit!(
     fill_scale_param!(model.sigma2_e, Aq_e, Bq_e, mq_e, vq_e, mq_inv_e, mq_log_e)
 
     model.elbo   = evidence
-    model.psi_0  = .0
+    model.psi_0 .= zero(y)
     model.psi_1 .= zero(y)
     model.psi_2 .= zero(y)
 

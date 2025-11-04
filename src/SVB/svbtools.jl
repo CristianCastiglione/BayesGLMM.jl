@@ -26,14 +26,14 @@ function _linesearch(
     b = alg.ubound
 
     psi_old, _, _ = _psi(y, f_old, s_new, f, 0.0)
-    elbo_old = - psi_old - .5 * m' * (w .* m)
+    elbo_old = - sum(psi_old) - .5 * m' * (w .* m)
 
     for k in alg.ntry
         m_new = m - rate * d
         f_new = C * m_new
 
         psi_new, _, _ = _psi(y, f_new, s_new, f, 0.0)
-        elbo_new = - psi_new - .5 * m_new' * (w .* m_new)
+        elbo_new = - sum(psi_new) - .5 * m_new' * (w .* m_new)
 
         if elbo_new - elbo_old > .0
             break
@@ -53,12 +53,12 @@ end
 
 # variational update of q_sigma2_e (continuous regresion models)
 function _update_sigma2e(
-    A_e::T, B_e::T, n_obs::Int64, psi_0::T, f::RegFamily, alg::SVB
+    A_e::T, B_e::T, n_obs::Int64, psi_0::Vector{T}, f::RegFamily, alg::SVB
     ) where T <: FP
 
     alpha = tailorder(f)
     Aq_e = A_e + float(n_obs) / alpha
-    Bq_e = B_e + psi_0 / alpha
+    Bq_e = B_e + sum(psi_0) / alpha
     mq_inv_e = _iginvmean(Aq_e, Bq_e)
 
     return Aq_e, Bq_e, mq_inv_e
@@ -66,14 +66,14 @@ end
 
 # variational update of q_sigma2_e (integer regresion models)
 function _update_sigma2e(
-    A_e::T, B_e::T, n_obs::Int64, psi_0::T, f::IntFamily, alg::SVB
+    A_e::T, B_e::T, n_obs::Int64, psi_0::Vector{T}, f::IntFamily, alg::SVB
     ) where T <: FP
     return A_e, B_e, 1.
 end
 
 # variational update of q_sigma2_e (categorical regresion models)
 function _update_sigma2e(
-    A_e::T, B_e::T, n_obs::Int64, psi_0::T, f::ClassFamily, alg::SVB
+    A_e::T, B_e::T, n_obs::Int64, psi_0::Vector{T}, f::ClassFamily, alg::SVB
     ) where T <: FP
     return A_e, B_e, 1.
 end

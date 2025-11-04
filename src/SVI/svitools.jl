@@ -11,14 +11,14 @@ precompile(_update_rate, (FP, FP, FP, FP, Int64, ))
 
 # variational initialization of q_sigma2_e (continuous regresion models)
 function _init_sigma2e(
-    A_e::T, B_e::T, n_obs::Int64, psi_0::T, f::RegFamily, alg::SVI
+    A_e::T, B_e::T, n_obs::Int64, psi_0::Vector{T}, f::RegFamily, alg::SVI
     ) where T <: FP
 
     alpha = tailorder(f)
     obsrate = n_obs / alg.minibatch
 
     Aq_e = A_e + float(n_obs) / alpha
-    Bq_e = B_e + obsrate * psi_0 / alpha
+    Bq_e = B_e + obsrate * sum(psi_0) / alpha
 
     mq_inv_e = _iginvmean(Aq_e, Bq_e)
 
@@ -28,7 +28,7 @@ end
 # variational initialization of q_sigma2_e (integer regresion models)
 function _init_sigma2e(
     A_e::T, B_e::T, n_obs::Int64,
-    psi_0::T, f::IntFamily, alg::SVI
+    psi_0::Vector{T}, f::IntFamily, alg::SVI
     ) where T <: FP
     
     return A_e, B_e, 1.
@@ -37,7 +37,7 @@ end
 # variational initialization of q_sigma2_e (categorical regresion models)
 function _init_sigma2e(
     A_e::T, B_e::T, n_obs::Int64,
-    psi_0::T, f::ClassFamily, alg::SVI
+    psi_0::Vector{T}, f::ClassFamily, alg::SVI
     ) where T <: FP
     
     return A_e, B_e, 1.
@@ -50,14 +50,14 @@ end
 # variational update of q_sigma2_e (continuous regresion models)
 function _update_sigma2e(
     Aq_e_old::T, Bq_e_old::T, A_e::T, B_e::T, n_obs::Int64,
-    psi_0::T, rate::T, f::RegFamily, alg::SVI
+    psi_0::Vector{T}, rate::T, f::RegFamily, alg::SVI
     ) where T <: FP
 
     alpha = tailorder(f)
     obsrate = n_obs / alg.minibatch
 
     Aq_e_new = A_e + float(n_obs) / alpha
-    Bq_e_new = B_e + obsrate * psi_0 / alpha
+    Bq_e_new = B_e + obsrate * sum(psi_0) / alpha
     
     Aq_e = (1 - rate) * Aq_e_old + rate * Aq_e_new
     Bq_e = (1 - rate) * Bq_e_old + rate * Bq_e_new
@@ -70,7 +70,7 @@ end
 # variational update of q_sigma2_e (integer regresion models)
 function _update_sigma2e(
     Aq_e_old::T, Bq_e_old::T, A_e::T, B_e::T,
-    n_obs::Int64, psi_0::T, rate::T, f::IntFamily, alg::SVI
+    n_obs::Int64, psi_0::Vector{T}, rate::T, f::IntFamily, alg::SVI
     ) where T <: FP
     return A_e, B_e, 1.
 end
@@ -78,7 +78,7 @@ end
 # variational update of q_sigma2_e (categorical regresion models)
 function _update_sigma2e(
     Aq_e_old::T, Bq_e_old::T, A_e::T, B_e::T,
-    n_obs::Int64, psi_0::T, rate::T, f::ClassFamily, alg::SVI
+    n_obs::Int64, psi_0::Vector{T}, rate::T, f::ClassFamily, alg::SVI
     ) where T <: FP
     return A_e, B_e, 1.
 end

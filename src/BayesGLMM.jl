@@ -105,6 +105,7 @@ const FPMat = Matrix{FP}
 const FPVecMat = VecOrMat{FP}
 const IntVec = Vector{Int64}
 
+const VecVector{T <: FP} = Vector{Vector{T}}
 const VecMatrix{T <: FP} = Vector{Matrix{T}}
 const SymMatrix{T <: FP} = Symmetric{T, Matrix{T}}
 const DiagMatrix{T <: FP} = Diagonal{T, Vector{T}}

@@ -204,7 +204,7 @@ function fit!(
     fill_scale_param!(model.sigma2_e, Aq_e, Bq_e)
 
     model.elbo   = elbo
-    model.psi_0  = psi_0
+    model.psi_0 .= psi_0
     model.psi_1 .= psi_1
     model.psi_2 .= psi_2
 

@@ -56,9 +56,9 @@ function _gausshermite(
     K = eta .+ sqrt2 .* (sigma * k')
     W = w ./ sqrtπ
 
-    psi_0 = sum(dloss(Y, K, f; order = 0) * W)
-    psi_1 =    (dloss(Y, K, f; order = 1) * W)
-    psi_2 =    (dloss(Y, K, f; order = 2) * W)
+    psi_0 = dloss(Y, K, f; order = 0) * W
+    psi_1 = dloss(Y, K, f; order = 1) * W
+    psi_2 = dloss(Y, K, f; order = 2) * W
 
     return psi_0, psi_1, psi_2
 end
@@ -112,7 +112,7 @@ function _monahanstefanski(
     phi_1 = cdf.(Normal.(-ms, ss), .0)
     phi_2 = pdf.(Normal.(-ms, ss), .0)
 
-    psi_0 = sum((phi_1 .* (eta * uk') .+ phi_2 .* bs) * wk .- y .* eta)
+    psi_0 = (phi_1 .* (eta * uk') .+ phi_2 .* bs) * wk .- y .* eta
     psi_1 = (phi_1 * wk) .- y
     psi_2 = (phi_2 * (wk .* sk))
 
@@ -129,7 +129,7 @@ function _psi(
 
     psi_2 = 2.0 * ones(length(y))
     psi_1 = 2.0 * (eta .- y)
-    psi_0 = sum((y .- eta).^2 .+ sigma.^2)
+    psi_0 = (y .- eta).^2 .+ sigma.^2
 
     return psi_0, psi_1, psi_2
 end
@@ -140,7 +140,7 @@ function _psi(
 
     psi_2 = exp.(eta .+ 0.5 .* sigma.^2)
     psi_1 = psi_2 .- y
-    psi_0 = sum(psi_2 .- y .* eta)
+    psi_0 = psi_2 .- y .* eta
 
     return psi_0, psi_1, psi_2
 end
@@ -182,7 +182,7 @@ function _psi(
 
     psi_2 = y .* exp.(- eta .+ 0.5 .* sigma.^2)
     psi_1 = - (psi_2 .+ 1.0)
-    psi_0 = sum(psi_2 .- log.(y) .- eta)
+    psi_0 = psi_2 .- log.(y) .- eta
 
     return psi_0, psi_1, psi_2
 end
@@ -198,7 +198,7 @@ function _psi(
 
     psi_2 = trim.(phi_2 ./ sigma, t)
     psi_1 = 1.0 .- f.tau .- phi_1
-    psi_0 = sum(sigma .* (phi_2 .- psi_1 .* z))
+    psi_0 = sigma .* (phi_2 .- psi_1 .* z)
 
     return psi_0, psi_1, psi_2
 end
@@ -224,8 +224,8 @@ function _psi(
 
     psi_2 = 2.0 * weights
     psi_1 = 2.0 * (- eps .* weights .+ lambda .* sigma.^2 .* phi_2)
-    psi_0 = sum((eps.^2 .+ sigma.^2) .* weights)
-    psi_0 -= sum(lambda .* eps .* sigma.^2 .* phi_2)
+    psi_0 = (eps.^2 .+ sigma.^2) .* weights
+    psi_0 -= lambda .* eps .* sigma.^2 .* phi_2
 
     return psi_0, psi_1, psi_2
 end
@@ -249,10 +249,10 @@ function _psi(
     psi_1  = eps_lo .* cdf_up .+ sigma.^2 .* pdf_up .- c
     psi_1 += eps_up .* cdf_lo .- sigma.^2 .* pdf_lo
     
-    psi_0  = sum(0.5 .* ((eps.^2 .+ sigma.^2) .* cdf_up .- sigma.^2 .* eps_up .* pdf_up))
-    psi_0 -= sum(0.5 .* ((eps.^2 .+ sigma.^2) .* cdf_lo .+ sigma.^2 .* eps_lo .* pdf_lo))
-    psi_0 += sum(c .* (eps .- 0.5 .* c) .* (1 .- cdf_up) .+ c .* sigma.^2 .* pdf_up)
-    psi_0 -= sum(c .* (eps .+ 0.5 .* c) .* cdf_lo .- c .* sigma.^2 .* pdf_lo)
+    psi_0  = 0.5 .* ((eps.^2 .+ sigma.^2) .* cdf_up .- sigma.^2 .* eps_up .* pdf_up)
+    psi_0 -= 0.5 .* ((eps.^2 .+ sigma.^2) .* cdf_lo .+ sigma.^2 .* eps_lo .* pdf_lo)
+    psi_0 += c .* (eps .- 0.5 .* c) .* (1 .- cdf_up) .+ c .* sigma.^2 .* pdf_up
+    psi_0 -= c .* (eps .+ 0.5 .* c) .* cdf_lo .- c .* sigma.^2 .* pdf_lo
 
     return psi_0, psi_1, psi_2
 end
@@ -270,7 +270,7 @@ function _psi(
 
     psi_2 = 2.0 .* trim.(phi_2 ./ sigma, t)
     psi_1 = 2.0 .* (phi_1 .- 1.0)
-    psi_0 = 2.0 * sum(sigma .* (phi_2 + phi_0))
+    psi_0 = 2.0 .* sigma .* (phi_2 + phi_0)
 
     return psi_0, psi_1, psi_2
 end
@@ -286,7 +286,7 @@ function _psi(
 
     psi_2 = trim.(2.0 .* phi_2 ./ sigma, 2.0 * t)
     psi_1 = 2.0 .* (- y .* phi_1)
-    psi_0 = sum(sigma .* (phi_2 .+ phi_1 .* z))
+    psi_0 = sigma .* (phi_2 .+ phi_1 .* z)
 
     return psi_0, psi_1, psi_2
 end
